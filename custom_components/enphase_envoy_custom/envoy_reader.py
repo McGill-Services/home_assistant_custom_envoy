@@ -280,42 +280,43 @@ class EnvoyReader:  # pylint: disable=too-many-instance-attributes
             "password": self.enlighten_pass,
         }
 
-        if self.use_enlighten_owner_token:
-            token_json = await self._fetch_owner_token_json()
+        # if self.use_enlighten_owner_token:
+        #     token_json = await self._fetch_owner_token_json()
 
-            self._token = token_json["token"]
-            time_left_days = (token_json["expires_at"] - time.time())/(24*3600)
-            _LOGGER.debug("Commissioned Token valid for %s days", time_left_days)
+        #     self._token = token_json["token"]
+        #     time_left_days = (token_json["expires_at"] - time.time())/(24*3600)
+        #     _LOGGER.debug("Commissioned Token valid for %s days", time_left_days)
 
-        elif self.commissioned == "True" or self.commissioned == "Commissioned":
-            # Login to website and store cookie
-            resp = await self._async_post(LOGIN_URL, data=payload_login)
-            payload_token = {
-                "Site": self.enlighten_site_id,
-                "serialNum": self.enlighten_serial_num,
-            }
-            response = await self._async_post(
-                TOKEN_URL, data=payload_token, cookies=resp.cookies
-            )
+        # elif self.commissioned == "True" or self.commissioned == "Commissioned":
+        #     # Login to website and store cookie
+        #     resp = await self._async_post(LOGIN_URL, data=payload_login)
+        #     payload_token = {
+        #         "Site": self.enlighten_site_id,
+        #         "serialNum": self.enlighten_serial_num,
+        #     }
+        #     response = await self._async_post(
+        #         TOKEN_URL, data=payload_token, cookies=resp.cookies
+        #     )
 
-            parsed_html = BeautifulSoup(response.text, features="html.parser")
-            self._token = parsed_html.body.find(  # pylint: disable=invalid-name, unused-variable, redefined-outer-name
-                "textarea"
-            ).text
-            _LOGGER.debug("Commissioned Token: %s", self._token)
+        #     parsed_html = BeautifulSoup(response.text, features="html.parser")
+        #     self._token = parsed_html.body.find(  # pylint: disable=invalid-name, unused-variable, redefined-outer-name
+        #         "textarea"
+        #     ).text
+        #     _LOGGER.debug("Commissioned Token: %s", self._token)
 
-        else:
-            # Login to website and store cookie
-            resp = await self._async_post(LOGIN_URL, data=payload_login)
-            payload_token = {"uncommissioned": "true", "Site": ""}
-            response = await self._async_post(
-                TOKEN_URL, data=payload_token, cookies=resp.cookies
-            )
-            soup = BeautifulSoup(response.text, features="html.parser")
-            self._token = soup.find("textarea").contents[
-                0
-            ]  # pylint: disable=invalid-name
-            _LOGGER.debug("Uncommissioned Token: %s", self._token)
+        # else:
+        
+        # Login to website and store cookie
+        resp = await self._async_post(LOGIN_URL, data=payload_login)
+        payload_token = {"uncommissioned": "true", "Site": ""}
+        response = await self._async_post(
+            TOKEN_URL, data=payload_token, cookies=resp.cookies
+        )
+        soup = BeautifulSoup(response.text, features="html.parser")
+        self._token = soup.find("textarea").contents[
+            0
+        ]  # pylint: disable=invalid-name
+        _LOGGER.debug("Uncommissioned Token: %s", self._token)
 
         await self._refresh_token_cookies()
 
