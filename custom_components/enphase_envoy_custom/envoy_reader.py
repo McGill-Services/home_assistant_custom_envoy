@@ -45,7 +45,7 @@ TOKEN_URL = "https://entrez.enphaseenergy.com/entrez_tokens"
 
 # paths for the enlighten 6 month owner token
 ENLIGHTEN_AUTH_FORM_URL = "https://enlighten.enphaseenergy.com"
-ENLIGHTEN_TOKEN_URL = "https://enlighten.enphaseenergy.com/entrez-auth-token?serial_num={}"
+ENLIGHTEN_TOKEN_URL = "https://enlighten.enphaseenergy.com/entrez-auth-token"
 
 _LOGGER = logging.getLogger(__name__)
 
